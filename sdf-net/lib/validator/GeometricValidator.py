@@ -28,7 +28,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-
+from sklearn.metrics import f1_score
 from lib.datasets import *
 from lib.validator.metrics import *
 
@@ -56,24 +56,18 @@ class GeometricValidator(object):
     def validate(self, epoch):
         """Geometric validation; sample surface points."""
 
-        val_dict = {}
-        val_dict['vol_iou'] = []
-        
+        ys = []
+        preds = []
         # Uniform points metrics
         for n_iter, data in enumerate(self.val_data_loader):
-
-            ids = data[0].to(self.device)
-            pts = data[1].to(self.device)
-            gts = data[2].to(self.device)
-            nrm = data[3].to(self.device) if self.args.get_normals else None
-
-            for d in range(self.args.num_lods):
-                self.net.lod = d
-
-                # Volumetric IoU
-                pred = self.net(pts, gts=gts, grad=nrm, ids=ids)
-                val_dict['vol_iou'] += [float(compute_iou(gts, pred))]
-                self.net.lod = None
-
-        return val_dict
+            y = data[1].to(self.device)
+            ind = y.abs().squeeze() < 1e-3
+            y = y[ind]
+            X = data[0].to(self.device)[ind]
+            ys.append(y > 0)
+            preds.append(self.net(X) > 0)
+        
+        y = torch.cat(ys).cpu()
+        pred = torch.cat(preds).cpu()
+        return f1_score(y, pred), len(y), y.sum().item(), pred.sum().item()
 

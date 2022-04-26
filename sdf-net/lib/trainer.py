@@ -488,15 +488,5 @@ class Trainer(object):
 
     def validate(self, epoch):
         
-        val_dict = self.validator.validate(epoch, self.loss_lods)
-        
-        log_text = 'EPOCH {}/{}'.format(epoch, self.args.epochs)
-
-        for k, v in val_dict.items():
-            score_total = 0.0
-            for lod, score in zip(self.loss_lods, v):
-                self.writer.add_scalar(f'Validation/{k}/{lod}', score, epoch)
-                score_total += score
-            log_text += ' | {}: {:.2f}'.format(k, score_total / len(v))
-        log.info(log_text)
+        log.info('Valid f1:%f, out of %d, y_pos:%d, pred_pos:%d' % self.validator.validate(epoch))
 
