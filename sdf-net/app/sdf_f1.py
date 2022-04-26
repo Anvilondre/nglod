@@ -69,6 +69,8 @@ if __name__ == '__main__':
     y = y[ind] > 0
     X = X[ind]
     yhat = net(X.to(device)) > 0
-    print('F1 score:', f1_score(y, yhat))
+    print('True distribution: pos:', y.sum().item(), 'neg:', (~y).sum().item())
+    print('Predicted distribution: pos:', yhat.sum().item(), 'neg:', (~yhat).sum().item())
+    print('F1 score:', f1_score(y.cpu(), yhat.cpu()))
     
     
