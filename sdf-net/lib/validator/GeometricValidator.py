@@ -64,10 +64,10 @@ class GeometricValidator(object):
             ind = y.abs().squeeze() < 1e-3
             y = y[ind]
             X = data[0].to(self.device)[ind]
-            ys.append(y > 0)
-            preds.append(self.net(X) > 0)
+            ys.append(y)
+            preds.append(self.net(X))
         
         y = torch.cat(ys).cpu()
         pred = torch.cat(preds).cpu()
-        return f1_score(y, pred), len(y), y.sum().item(), pred.sum().item()
+        return f1_score(y > 0, pred > 0), f1_score(y < 0, pred < 0), len(y), y.sum().item(), pred.sum().item(), nn.MSELoss()(pred, y)
 
