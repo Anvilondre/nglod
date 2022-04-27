@@ -488,5 +488,5 @@ class Trainer(object):
 
     def validate(self, epoch):
         
-        log.info('Valid f1_pos:%.4f, y1_neg:%.4f, out of %d, y_pos:%d, pred_pos:%d, mse_loss:%e' % self.validator.validate(epoch))
+        log.info('Valid f1_pos:%.4f, f1_neg:%.4f, out of %d, y_pos:%d, pred_pos:%d, mse_loss:%e' % self.validator.validate(epoch))
 

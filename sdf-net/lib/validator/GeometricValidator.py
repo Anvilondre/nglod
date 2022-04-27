@@ -69,5 +69,5 @@ class GeometricValidator(object):
         
         y = torch.cat(ys).cpu()
         pred = torch.cat(preds).cpu()
-        return f1_score(y > 0, pred > 0), f1_score(y < 0, pred < 0), len(y), y.sum().item(), pred.sum().item(), nn.MSELoss()(pred, y)
+        return f1_score(y > 0, pred > 0), f1_score(y < 0, pred < 0), len(y), (y > 0).sum().item(), (pred > 0).sum().item(), nn.MSELoss()(pred, y).item()
 
